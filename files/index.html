@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ALIGN PRO 3D — Sistema de Orçamento de Alinhamento</title>
+
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  ALIGN PRO 3D — index.html                              ║
+  ║  Ponto de entrada do aplicativo                         ║
+  ║                                                         ║
+  ║  ORDEM DE CARREGAMENTO (não altere):                    ║
+  ║    1. CDNs (React, Babel)                               ║
+  ║    2. db.js        ← banco de dados de alinhamento      ║
+  ║    3. services.js  ← catálogo de serviços e preços      ║
+  ║    4. storage.js   ← camada de persistência             ║
+  ║    5. app.js       ← interface React (precisa de Babel) ║
+  ║                                                         ║
+  ║  COMPATIBILIDADE:                                       ║
+  ║    🐧 Linux   — Firefox, Chromium, Chrome, Brave        ║
+  ║    🪟 Windows — Chrome, Edge, Firefox                   ║
+  ║    🍎 macOS   — Safari, Chrome, Firefox                 ║
+  ║    🤖 Android — Chrome, Firefox                         ║
+  ║    ☁️ Online  — Claude.ai (usa window.storage)          ║
+  ║                                                         ║
+  ║  COMO RODAR LOCALMENTE (Linux):                         ║
+  ║    firefox index.html                                   ║
+  ║    chromium index.html                                  ║
+  ║    xdg-open index.html                                  ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+
+<!-- ── CDNs ─────────────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link  href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+
+<!-- ── Módulo 1: Banco de dados ──────────────────── -->
+<script src="db.js"></script>
+
+<!-- ── Módulo 2: Catálogo de serviços ───────────── -->
+<script src="services.js"></script>
+
+<!-- ── Módulo 3: Camada de storage ──────────────── -->
+<script src="storage.js"></script>
+
+<!-- ── Estilos globais ───────────────────────────── -->
+<style>
+  /* Reset & base */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body { background: #07090f; color: #e0e0e0; font-family: 'Rajdhani', 'Liberation Sans', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  /* Tipografia especial */
+  .orb { font-family: 'Orbitron', 'DejaVu Sans Mono', monospace; }
+
+  /* Scrollbar custom */
+  ::-webkit-scrollbar        { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track  { background: #07090f; }
+  ::-webkit-scrollbar-thumb  { background: #d97706; border-radius: 3px; }
+  * { scrollbar-width: thin; scrollbar-color: #d97706 #07090f; }
+
+  /* Selects */
+  select option { background: #141824; color: #e0e0e0; }
+
+  /* Focus ring */
+  input:focus, select:focus, textarea:focus {
+    border-color: #d97706 !important;
+    box-shadow: 0 0 0 2px #d9770618;
+    outline: none;
+  }
+
+  /* Animações */
+  @keyframes fadeIn  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse   { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @keyframes spin    { to { transform: rotate(360deg); } }
+
+  /* Estado de carregamento */
+  #loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 16px;
+    color: #d97706;
+  }
+  #loading-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #d9770630;
+    border-top-color: #d97706;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Impressão */
+  @media print {
+    .no-print  { display: none !important; }
+    body, html { background: #fff !important; color: #111 !important; }
+    .print-card {
+      background: #fff !important;
+      border: 1px solid #ccc !important;
+      color: #111 !important;
+    }
+    a { color: #333 !important; }
+  }
+
+  /* Responsividade básica */
+  @media (max-width: 600px) {
+    [style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Estado de carregamento enquanto React não monta -->
+<div id="loading">
+  <div id="loading-spinner"></div>
+  <div class="orb" style="font-size:13px;letter-spacing:2px;color:#d97706">ALIGN PRO 3D</div>
+  <div style="font-size:11px;color:#444">Carregando banco de dados...</div>
+</div>
+
+<!-- Root do React -->
+<div id="root" style="display:none"></div>
+
+<!-- ── Módulo 4: Aplicação React (precisa de Babel) ── -->
+<script type="text/babel" src="app.js" data-type="module"></script>
+
+<!-- Oculta loading quando React monta -->
+<script>
+  // Observa quando #root recebe filhos (React montou)
+  const obs = new MutationObserver(() => {
+    const root = document.getElementById("root");
+    if (root && root.children.length > 0) {
+      document.getElementById("loading").style.display = "none";
+      root.style.display = "block";
+      obs.disconnect();
+    }
+  });
+  obs.observe(document.getElementById("root"), { childList: true, subtree: true });
+
+  // Fallback: remove loading após 5s mesmo que algo falhe
+  setTimeout(() => {
+    const l = document.getElementById("loading");
+    const r = document.getElementById("root");
+    if (l) l.style.display = "none";
+    if (r) r.style.display = "block";
+  }, 5000);
+</script>
+
+</body>
+</html>

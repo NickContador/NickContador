@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoWorks 3D - Diagnóstico de Geometria</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>⚙️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="12" stroke="#3b82f6" stroke-width="2.5"/>
+                        <circle cx="16" cy="16" r="5" fill="#3b82f6" opacity="0.3"/>
+                        <circle cx="16" cy="16" r="2.5" fill="#3b82f6"/>
+                        <path d="M16 4v3M16 25v3M4 16h3M25 16h3" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="logo-text">AutoWorks<span class="logo-highlight">3D</span></span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="diagnostico">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <span>Diagnóstico</span>
+                </button>
+                <button class="nav-btn" data-tab="consulta">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <span>Consulta</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="btn-sincronizar" class="btn-sync">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9h-4m-9 9A9 9 0 0 1 3 12m9 9v-4M3 12a9 9 0 0 1 9-9m-9 9h4m9-9v4"/></svg>
+                    <span>Sincronizar</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 class="topbar-title">Diagnóstico de Geometria</h1>
+                    <p id="header-sub" class="topbar-sub">Selecione um veículo para iniciar</p>
+                </div>
+                <div class="topbar-right">
+                    <div class="select-wrapper">
+                        <select id="seletor-veiculo" class="select-veiculo">
+                            <option value="">Selecione um veículo...</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <div id="mensagem-status" class="toast"></div>
+
+            <div id="tab-diagnostico" class="tab-content active">
+                <div class="dashboard">
+
+                    <div class="car-axle">
+                        <svg viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#2a3040"/>
+                                    <stop offset="100%" stop-color="#1a1f2e"/>
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                </filter>
+                            </defs>
+                            <line x1="50" y1="130" x2="350" y2="130" stroke="#2a3040" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="50" y1="134" x2="350" y2="134" stroke="#1a1f2e" stroke-width="2" stroke-dasharray="8 6"/>
+                            <line x1="200" y1="130" x2="200" y2="50" stroke="#2a3040" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="200" y1="50" x2="200" y2="30" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+                            <circle cx="200" cy="20" r="6" fill="#3b82f6" opacity="0.3"/>
+                            <circle cx="200" cy="20" r="3" fill="#3b82f6"/>
+                            <text x="200" y="16" text-anchor="middle" fill="#5a6478" font-size="10" font-family="Inter">EIXO DIANTEIRO</text>
+                            <g id="roda-esquerda-svg" transform="translate(110, 90)">
+                                <circle cx="0" cy="0" r="28" stroke="#3b82f6" stroke-width="3" opacity="0.15"/>
+                            </g>
+                            <g id="roda-direita-svg" transform="translate(290, 90)">
+                                <circle cx="0" cy="0" r="28" stroke="#3b82f6" stroke-width="3" opacity="0.15"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <div class="gauge-grid">
+                        <div class="gauge-card" id="card-camber">
+                            <div class="gauge-header">
+                                <span class="gauge-name">Câmber</span>
+                                <span class="gauge-axis">Dianteiro</span>
+                            </div>
+                            <div class="gauge-display">
+                                <span class="gauge-value" id="leitura-camber">0.00<span class="gauge-deg">°</span></span>
+                            </div>
+                            <div class="gauge-bar-track">
+                                <div class="gauge-bar-fill" id="barra-camber"></div>
+                                <div class="gauge-marker" id="marcador-camber"></div>
+                            </div>
+                            <div class="gauge-target">
+                                <span class="target-label">Referência</span>
+                                <span class="target-value" id="alvo-camber">--</span>
+                            </div>
+                            <input type="range" id="slider-camber" min="-3" max="3" step="0.01" value="0">
+                            <div class="gauge-wheel">
+                                <svg viewBox="0 0 100 120" class="wheel-svg" id="svg-camber">
+                                    <defs>
+                                        <linearGradient id="tireGrad" x1="0" y1="0" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#1a1f2e"/>
+                                            <stop offset="100%" stop-color="#2a3040"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <line x1="10" y1="110" x2="90" y2="110" stroke="#2a3040" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="10" y1="115" x2="90" y2="115" stroke="#1a1f2e" stroke-width="2" stroke-dasharray="5 4"/>
+                                    <g class="wheel-group">
+                                        <circle cx="50" cy="60" r="32" fill="url(#tireGrad)" stroke="#3b82f6" stroke-width="2.5"/>
+                                        <circle cx="50" cy="60" r="18" fill="none" stroke="#5a6478" stroke-width="1.5"/>
+                                        <line x1="50" y1="28" x2="50" y2="92" stroke="#3b82f6" stroke-width="1.5" opacity="0.4"/>
+                                        <line x1="18" y1="60" x2="82" y2="60" stroke="#3b82f6" stroke-width="1.5" opacity="0.4"/>
+                                        <circle cx="50" cy="60" r="5" fill="#3b82f6"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="gauge-status" id="status-camber">Aguardando veículo</div>
+                        </div>
+
+                        <div class="gauge-card" id="card-caster">
+                            <div class="gauge-header">
+                                <span class="gauge-name">Cáster</span>
+                                <span class="gauge-axis">Dianteiro</span>
+                            </div>
+                            <div class="gauge-display">
+                                <span class="gauge-value" id="leitura-caster">0.00<span class="gauge-deg">°</span></span>
+                            </div>
+                            <div class="gauge-bar-track">
+                                <div class="gauge-bar-fill" id="barra-caster"></div>
+                                <div class="gauge-marker" id="marcador-caster"></div>
+                            </div>
+                            <div class="gauge-target">
+                                <span class="target-label">Referência</span>
+                                <span class="target-value" id="alvo-caster">--</span>
+                            </div>
+                            <input type="range" id="slider-caster" min="0" max="10" step="0.01" value="5">
+                            <div class="gauge-wheel">
+                                <svg viewBox="0 0 100 120" class="wheel-svg" id="svg-caster">
+                                    <line x1="10" y1="110" x2="90" y2="110" stroke="#2a3040" stroke-width="3" stroke-linecap="round"/>
+                                    <g class="wheel-group">
+                                        <ellipse cx="50" cy="60" rx="32" ry="28" fill="#1a1f2e" stroke="#3b82f6" stroke-width="2.5"/>
+                                        <ellipse cx="50" cy="60" rx="18" ry="16" fill="none" stroke="#5a6478" stroke-width="1.5"/>
+                                        <line x1="50" y1="32" x2="50" y2="88" stroke="#3b82f6" stroke-width="1.5" opacity="0.4"/>
+                                        <line x1="18" y1="60" x2="82" y2="60" stroke="#3b82f6" stroke-width="1.5" opacity="0.4"/>
+                                        <circle cx="50" cy="60" r="5" fill="#3b82f6"/>
+                                        <line x1="50" y1="60" x2="82" y2="40" stroke="#5a6478" stroke-width="2" stroke-linecap="round"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="gauge-status" id="status-caster">Aguardando veículo</div>
+                        </div>
+
+                        <div class="gauge-card" id="card-convergencia">
+                            <div class="gauge-header">
+                                <span class="gauge-name">Convergência</span>
+                                <span class="gauge-axis">Dianteiro</span>
+                            </div>
+                            <div class="gauge-display">
+                                <span class="gauge-value" id="leitura-convergencia">0.00<span class="gauge-deg">°</span></span>
+                            </div>
+                            <div class="gauge-bar-track">
+                                <div class="gauge-bar-fill" id="barra-convergencia"></div>
+                                <div class="gauge-marker" id="marcador-convergencia"></div>
+                            </div>
+                            <div class="gauge-target">
+                                <span class="target-label">Referência</span>
+                                <span class="target-value" id="alvo-convergencia">--</span>
+                            </div>
+                            <input type="range" id="slider-convergencia" min="-2" max="2" step="0.01" value="0">
+                            <div class="gauge-wheel">
+                                <svg viewBox="0 0 160 100" class="wheel-svg" id="svg-convergencia">
+                                    <defs>
+                                        <linearGradient id="convergeGrad" x1="0" y1="0" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#1a1f2e"/>
+                                            <stop offset="100%" stop-color="#2a3040"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <line x1="0" y1="85" x2="160" y2="85" stroke="#2a3040" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 4"/>
+                                    <g class="wheel-group" id="conv-esq">
+                                        <rect x="18" y="12" width="36" height="66" rx="8" fill="url(#convergeGrad)" stroke="#3b82f6" stroke-width="2"/>
+                                        <line x1="36" y1="12" x2="36" y2="78" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+                                        <line x1="18" y1="45" x2="54" y2="45" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+                                        <circle cx="36" cy="45" r="3" fill="#3b82f6"/>
+                                    </g>
+                                    <g class="wheel-group" id="conv-dir">
+                                        <rect x="106" y="12" width="36" height="66" rx="8" fill="url(#convergeGrad)" stroke="#3b82f6" stroke-width="2"/>
+                                        <line x1="124" y1="12" x2="124" y2="78" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+                                        <line x1="106" y1="45" x2="142" y2="45" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+                                        <circle cx="124" cy="45" r="3" fill="#3b82f6"/>
+                                    </g>
+                                    <text x="80" y="98" text-anchor="middle" fill="#5a6478" font-size="9" font-family="Inter">VISTA SUPERIOR</text>
+                                </svg>
+                            </div>
+                            <div class="gauge-status" id="status-convergencia">Aguardando veículo</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-panel">
+                        <div class="summary-header">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="10"/></svg>
+                            <span>Resumo do Diagnóstico</span>
+                        </div>
+                        <div class="summary-body">
+                            <div class="summary-item">
+                                <span class="summary-label">Câmber</span>
+                                <span class="summary-value" id="resumo-camber">--</span>
+                                <span class="summary-badge" id="badge-camber"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Cáster</span>
+                                <span class="summary-value" id="resumo-caster">--</span>
+                                <span class="summary-badge" id="badge-caster"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Convergência</span>
+                                <span class="summary-value" id="resumo-convergencia">--</span>
+                                <span class="summary-badge" id="badge-convergencia"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-consulta" class="tab-content">
+                <div class="consulta-panel">
+                    <div class="consulta-header">
+                        <div class="consulta-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <span>Consulta de Veículos</span>
+                        </div>
+                        <p class="consulta-sub">Encontre dados de geometria por fabricante, marca, modelo ou ano</p>
+                    </div>
+
+                    <div class="filtros">
+                        <div class="filtro-group">
+                            <label class="filtro-label">Fabricante</label>
+                            <input type="text" id="filtro-fabricante" placeholder="Ex: Stellantis, VW Group..." class="filtro-input">
+                        </div>
+                        <div class="filtro-group">
+                            <label class="filtro-label">Marca</label>
+                            <input type="text" id="filtro-marca" placeholder="Ex: Fiat, BMW..." class="filtro-input">
+                        </div>
+                        <div class="filtro-group">
+                            <label class="filtro-label">Modelo</label>
+                            <input type="text" id="filtro-modelo" placeholder="Ex: Uno, X5..." class="filtro-input">
+                        </div>
+                        <div class="filtro-group">
+                            <label class="filtro-label">Ano</label>
+                            <input type="number" id="filtro-ano" placeholder="Ex: 2020" class="filtro-input">
+                        </div>
+                        <div class="filtro-actions">
+                            <button id="btn-pesquisar" class="btn-primary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                Pesquisar
+                            </button>
+                            <button id="btn-limpar" class="btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="resultado-bar" id="resultado-info"></div>
+
+                    <div class="tabela-wrapper">
+                        <table id="tabela-resultados">
+                            <thead>
+                                <tr>
+                                    <th>Fabricante</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Ano</th>
+                                    <th class="th-acao"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-resultados"></tbody>
+                        </table>
+                    </div>
+                    <div id="sem-resultados" class="empty-state hidden">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#5a6478" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <p>Nenhum veículo encontrado</p>
+                        <span>Tente alterar os filtros de busca</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
